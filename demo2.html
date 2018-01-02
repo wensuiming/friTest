@@ -1,0 +1,101 @@
+<html>
+
+<head>
+    <meta charset="utf-8" content="">
+    <script src="lib/echarts.min.js"></script>
+    <script src="lib/angular1.4.6.js"></script>
+    <link rel="stylesheet" type="" href="theme/bootstrap.min.css">
+</head>
+
+<body ng-app="app">
+    <div ng-controller="myCtrl">
+        <div id="main" style="width:600px; height:400px"></div>
+        <button class="btn btn-default ml-20 blue" ng-click="refreshChart()">refresh</button>
+
+    </div>
+</body>
+<script type="text/javascript">
+    var app = angular.module("app", []);
+    app.controller("myCtrl", ["$scope", function ($scope) {
+        app.title = '环形图';
+        var myChart = echarts.init(document.getElementById("main"));
+        indexdata = {
+            category: ['A', 'B', 'C'],
+            total: [4, 1, 1]
+        };
+
+        $scope.option = {
+            title: {
+                text: 'xxxx',
+                subtext: '',
+                x: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                x: 'left',
+                data: indexdata.category
+            },
+            toolbox: {
+                show: false,
+                feature: {
+                    mark: true,
+                    dataView: {
+                        readOnly: false
+                    },
+                    restore: true,
+                    saveAsImage: true
+                }
+            },
+            calculable: true,
+            series: [{
+                name: '数量小计',
+                type: 'pie',
+                radius: [0, 110],
+                selectedOffset: [10],
+                //data:[
+                //{value:indexdata.total[0], name:indexdata.category[0]},
+                //{value:indexdata.total[1], name:indexdata.category[1]}
+                //] 
+
+                data: (function () {
+
+                    var res = [];
+                    var len = indexdata.total.length;
+                    while (len--) {
+                        res.push({
+                            name: indexdata.category[len],
+                            value: indexdata.total[len]
+                        });
+                    }
+                    return res;
+                })()
+
+
+
+            }]
+        };
+
+        $scope.refreshChart = function () {
+            // echarts = null;
+            // option.title.text = "asdsa" + parseInt(Math.random(1, 100) * 100);
+            myChart.setOption($scope.option);
+        }
+        $scope.init = function () {
+            myChart.setOption($scope.option);
+        }
+        $scope.init();
+        myChart.on('click', function (params) {
+            window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));
+        });
+        myChart.on("pieselectchanged", function (params) {
+            console.log(params)
+            $scope.option.legend.selected = params.selected;
+        })
+    }]);
+</script>
+
+</html>
